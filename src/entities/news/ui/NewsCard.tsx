@@ -1,4 +1,4 @@
-import { Card, Tag, Typography } from "antd";
+import { Card, Tag, Space, Typography } from "antd";
 import type { NewsPost } from "@shared/types/news";
 import { useAppDispatch } from "@shared/hooks/redux";
 import { likePost, dislikePost } from "@entities/news/model/newsSlice";
@@ -18,39 +18,35 @@ export const NewsCard = ({ post }: Props) => {
   return (
     <Card
       title={post.title}
-      style={{ marginBottom: 16, borderRadius: 8 }}
-      styles={{
-        body: { paddingBottom: 8 },
-      }}
+      styles={{ body: { paddingBottom: 8 } }}
+      variant="borderless"
     >
       <Paragraph ellipsis={{ rows: 3 }}>{post.body}</Paragraph>
 
-      <div
-        style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8 }}
-      >
+      <Space wrap size={[8, 8]}>
         {post.tags.map((tag) => (
-          <Tag key={tag}>{tag}</Tag>
+          <Tag key={tag} style={{ cursor: "pointer" }}>
+            {tag}
+          </Tag>
         ))}
-      </div>
+      </Space>
 
-      <div
-        style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}
-      >
+      <Space style={{ marginTop: 8 }}>
         <span
           onClick={handleLike}
-          style={{ fontSize: "0.75rem", cursor: "pointer" }}
+          style={{ fontSize: 12, cursor: "pointer" }}
           title="Like"
         >
           ❤️ {post.reactions.likes}
         </span>
         <span
           onClick={handleDislike}
-          style={{ fontSize: "0.75rem", cursor: "pointer" }}
+          style={{ fontSize: 12, cursor: "pointer" }}
           title="Dislike"
         >
           👎 {post.reactions.dislikes}
         </span>
-      </div>
+      </Space>
     </Card>
   );
 };

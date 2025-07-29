@@ -3,7 +3,7 @@ import { useInView } from "react-intersection-observer";
 import { fetchNews, resetNews } from "@entities/news/model/newsSlice";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
 import { NewsCard } from "@entities/news/ui/NewsCard";
-import { Alert, Card, notification, Skeleton, Spin } from "antd";
+import { Row, Col, Card, Alert, Skeleton, Spin, notification } from "antd";
 import { newsSelectors } from "@entities/news/model/selectors";
 
 export const NewsList = () => {
@@ -12,6 +12,11 @@ export const NewsList = () => {
   const isLoading = useAppSelector(newsSelectors.isLoading);
   const error = useAppSelector(newsSelectors.error);
   const hasMore = useAppSelector(newsSelectors.hasMore);
+
+  const contentWrapperStyles = {
+    maxWidth: 800,
+    margin: "0 auto",
+  };
 
   const { ref, inView } = useInView({
     threshold: 1,
@@ -45,13 +50,15 @@ export const NewsList = () => {
   const isFirstLoad = items.length === 0 && isLoading;
   if (isFirstLoad) {
     return (
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: 16 }}>
-        {Array.from({ length: 3 }).map((_, idx) => (
-          <Card style={{ marginBottom: 16 }} key={idx}>
-            <Skeleton active paragraph={{ rows: 3 }} />
-          </Card>
-        ))}
-      </div>
+      <Row justify="center" style={contentWrapperStyles}>
+        <Col>
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <Card style={{ marginBottom: 16 }} key={idx}>
+              <Skeleton active paragraph={{ rows: 3 }} />
+            </Card>
+          ))}
+        </Col>
+      </Row>
     );
   }
 
@@ -59,18 +66,20 @@ export const NewsList = () => {
     return <Alert message="Ошибка" description={error} type="error" showIcon />;
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: 16 }}>
-      {items.map((post, idx) => (
-        <NewsCard key={`${post.id}-${idx}`} post={post} />
-      ))}
+    <Row justify="center" style={contentWrapperStyles}>
+      <Col span={24}>
+        {items.map((post, idx) => (
+          <NewsCard key={`${post.id}-${idx}`} post={post} />
+        ))}
 
-      {isLoading && (
-        <div style={{ textAlign: "center", padding: 16 }}>
-          <Spin />
-        </div>
-      )}
+        {isLoading && (
+          <div style={{ textAlign: "center", padding: 16 }}>
+            <Spin />
+          </div>
+        )}
 
-      <div ref={ref} />
-    </div>
+        <div ref={ref} />
+      </Col>
+    </Row>
   );
 };
