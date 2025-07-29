@@ -1,4 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import type { NewsPost } from "@shared/types/news";
 import { getNews } from "@shared/api/news-api";
 
@@ -41,6 +45,14 @@ export const newsSlice = createSlice({
   name: "news",
   initialState,
   reducers: {
+    likePost(state, action: PayloadAction<number>) {
+      const post = state.items.find((p) => p.id === action.payload);
+      if (post) post.reactions.likes += 1;
+    },
+    dislikePost(state, action: PayloadAction<number>) {
+      const post = state.items.find((p) => p.id === action.payload);
+      if (post) post.reactions.dislikes += 1;
+    },
     resetNews: () => initialState,
   },
   extraReducers: (builder) => {
@@ -64,5 +76,5 @@ export const newsSlice = createSlice({
   },
 });
 
-export const { resetNews } = newsSlice.actions;
+export const { likePost, dislikePost, resetNews } = newsSlice.actions;
 export const newsReducer = newsSlice.reducer;

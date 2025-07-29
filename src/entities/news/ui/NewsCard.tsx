@@ -1,5 +1,7 @@
 import { Card, Tag, Typography } from "antd";
 import type { NewsPost } from "@shared/types/news";
+import { useAppDispatch } from "@shared/hooks/redux";
+import { likePost, dislikePost } from "@entities/news/model/newsSlice";
 
 const { Paragraph } = Typography;
 
@@ -8,11 +10,18 @@ interface Props {
 }
 
 export const NewsCard = ({ post }: Props) => {
+  const dispatch = useAppDispatch();
+
+  const handleLike = () => dispatch(likePost(post.id));
+  const handleDislike = () => dispatch(dislikePost(post.id));
+
   return (
     <Card
       title={post.title}
       style={{ marginBottom: 16, borderRadius: 8 }}
-      bodyStyle={{ paddingBottom: 8 }}
+      styles={{
+        body: { paddingBottom: 8 },
+      }}
     >
       <Paragraph ellipsis={{ rows: 3 }}>{post.body}</Paragraph>
 
@@ -27,10 +36,15 @@ export const NewsCard = ({ post }: Props) => {
       <div
         style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}
       >
-        <span style={{ fontSize: "0.75rem", cursor: "pointer" }} title="Like">
+        <span
+          onClick={handleLike}
+          style={{ fontSize: "0.75rem", cursor: "pointer" }}
+          title="Like"
+        >
           ❤️ {post.reactions.likes}
         </span>
         <span
+          onClick={handleDislike}
           style={{ fontSize: "0.75rem", cursor: "pointer" }}
           title="Dislike"
         >

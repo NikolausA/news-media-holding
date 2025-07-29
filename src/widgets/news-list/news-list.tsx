@@ -4,36 +4,35 @@ import { fetchNews, resetNews } from "@entities/news/model/newsSlice";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
 import { NewsCard } from "@entities/news/ui/NewsCard";
 import { Alert, Card, notification, Skeleton, Spin } from "antd";
+import { newsSelectors } from "@entities/news/model/selectors";
 
 export const NewsList = () => {
   const dispatch = useAppDispatch();
-  const { items, isLoading, error, hasMore } = useAppSelector(
-    (state) => state.news
-  );
+  const items = useAppSelector(newsSelectors.items);
+  const isLoading = useAppSelector(newsSelectors.isLoading);
+  const error = useAppSelector(newsSelectors.error);
+  const hasMore = useAppSelector(newsSelectors.hasMore);
 
   const { ref, inView } = useInView({
     threshold: 1,
   });
 
-  // Первая загрузка
   useEffect(() => {
     if (items.length === 0) {
       dispatch(fetchNews());
     }
 
     return () => {
-      dispatch(resetNews()); // если нужно сбрасывать при размонтировании
+      dispatch(resetNews());
     };
   }, []);
 
-  // Бесконечная прокрутка
   useEffect(() => {
     if (inView && hasMore && !isLoading) {
       dispatch(fetchNews());
     }
   }, [inView]);
 
-  // Уведомление об ошибке
   useEffect(() => {
     if (error) {
       notification.error({
@@ -43,7 +42,6 @@ export const NewsList = () => {
     }
   }, [error]);
 
-  // 👉 Показываем скелетон при первой загрузке
   const isFirstLoad = items.length === 0 && isLoading;
   if (isFirstLoad) {
     return (
@@ -57,14 +55,13 @@ export const NewsList = () => {
     );
   }
 
-  // 👉 Ошибка
   if (error)
     return <Alert message="Ошибка" description={error} type="error" showIcon />;
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: 16 }}>
-      {items.map((post) => (
-        <NewsCard key={post.id} post={post} />
+      {items.map((post, idx) => (
+        <NewsCard key={`${post.id}-${idx}`} post={post} />
       ))}
 
       {isLoading && (
