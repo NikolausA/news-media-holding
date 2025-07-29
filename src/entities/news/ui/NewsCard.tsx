@@ -1,4 +1,4 @@
-import { Card, Tag, Space, Typography } from "antd";
+import { Card, Tag, Typography, Space, Grid } from "antd";
 import type { NewsPost } from "@shared/types/news";
 import { useAppDispatch } from "@shared/hooks/redux";
 import { likePost, dislikePost } from "@entities/news/model/newsSlice";
@@ -11,6 +11,7 @@ interface Props {
 
 export const NewsCard = ({ post }: Props) => {
   const dispatch = useAppDispatch();
+  const screens = Grid.useBreakpoint();
 
   const handleLike = () => dispatch(likePost(post.id));
   const handleDislike = () => dispatch(dislikePost(post.id));
@@ -18,12 +19,32 @@ export const NewsCard = ({ post }: Props) => {
   return (
     <Card
       title={post.title}
-      styles={{ body: { paddingBottom: 8 } }}
+      styles={{
+        body: {
+          paddingBottom: screens.xs ? 6 : 8,
+        },
+      }}
       variant="borderless"
+      style={{
+        width: "100%",
+        marginBottom: screens.xs ? 12 : 16,
+      }}
+      headStyle={{
+        fontSize: screens.xs ? 16 : 18,
+      }}
     >
-      <Paragraph ellipsis={{ rows: 3 }}>{post.body}</Paragraph>
+      <Paragraph
+        ellipsis={{ rows: 3 }}
+        style={{ fontSize: screens.xs ? 12 : 14 }}
+      >
+        {post.body}
+      </Paragraph>
 
-      <Space wrap size={[8, 8]}>
+      <Space
+        wrap
+        size={[screens.xs ? 4 : 8, screens.xs ? 4 : 8]}
+        style={{ marginBottom: screens.xs ? 4 : 8 }}
+      >
         {post.tags.map((tag) => (
           <Tag key={tag} style={{ cursor: "pointer" }}>
             {tag}
@@ -31,17 +52,17 @@ export const NewsCard = ({ post }: Props) => {
         ))}
       </Space>
 
-      <Space style={{ marginTop: 8 }}>
+      <Space style={{ marginTop: screens.xs ? 4 : 8 }}>
         <span
           onClick={handleLike}
-          style={{ fontSize: 12, cursor: "pointer" }}
+          style={{ fontSize: screens.xs ? 10 : 12, cursor: "pointer" }}
           title="Like"
         >
           ❤️ {post.reactions.likes}
         </span>
         <span
           onClick={handleDislike}
-          style={{ fontSize: 12, cursor: "pointer" }}
+          style={{ fontSize: screens.xs ? 10 : 12, cursor: "pointer" }}
           title="Dislike"
         >
           👎 {post.reactions.dislikes}

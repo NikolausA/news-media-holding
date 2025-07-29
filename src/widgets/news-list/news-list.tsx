@@ -1,10 +1,19 @@
+import {
+  Row,
+  Col,
+  Card,
+  Skeleton,
+  Spin,
+  Alert,
+  notification,
+  Grid,
+} from "antd";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchNews, resetNews } from "@entities/news/model/newsSlice";
 import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
-import { NewsCard } from "@entities/news/ui/NewsCard";
-import { Row, Col, Card, Alert, Skeleton, Spin, notification } from "antd";
+import { fetchNews, resetNews } from "@entities/news/model/newsSlice";
 import { newsSelectors } from "@entities/news/model/selectors";
+import { NewsCard } from "@entities/news/ui/NewsCard";
 
 export const NewsList = () => {
   const dispatch = useAppDispatch();
@@ -12,15 +21,14 @@ export const NewsList = () => {
   const isLoading = useAppSelector(newsSelectors.isLoading);
   const error = useAppSelector(newsSelectors.error);
   const hasMore = useAppSelector(newsSelectors.hasMore);
+  const { ref, inView } = useInView({ threshold: 1 });
+  const screens = Grid.useBreakpoint();
 
   const contentWrapperStyles = {
     maxWidth: 800,
     margin: "0 auto",
+    padding: screens.xs ? "0 12px" : "0 16px", // паддинг по краям для мобильных
   };
-
-  const { ref, inView } = useInView({
-    threshold: 1,
-  });
 
   useEffect(() => {
     if (items.length === 0) {
@@ -51,9 +59,9 @@ export const NewsList = () => {
   if (isFirstLoad) {
     return (
       <Row justify="center" style={contentWrapperStyles}>
-        <Col>
+        <Col span={24}>
           {Array.from({ length: 3 }).map((_, idx) => (
-            <Card style={{ marginBottom: 16 }} key={idx}>
+            <Card style={{ marginBottom: screens.xs ? 12 : 16 }} key={idx}>
               <Skeleton active paragraph={{ rows: 3 }} />
             </Card>
           ))}
@@ -62,14 +70,28 @@ export const NewsList = () => {
     );
   }
 
-  if (error)
-    return <Alert message="Ошибка" description={error} type="error" showIcon />;
+  if (error) {
+    return (
+      <Alert
+        message="Ошибка"
+        description={error}
+        type="error"
+        showIcon
+        style={screens.xs ? { margin: "0 12px" } : undefined}
+      />
+    );
+  }
 
   return (
     <Row justify="center" style={contentWrapperStyles}>
       <Col span={24}>
         {items.map((post, idx) => (
-          <NewsCard key={`${post.id}-${idx}`} post={post} />
+          <div
+            key={`${post.id}-${idx}`}
+            style={{ marginBottom: screens.xs ? 12 : 16 }}
+          >
+            <NewsCard post={post} />
+          </div>
         ))}
 
         {isLoading && (
