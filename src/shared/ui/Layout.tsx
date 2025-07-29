@@ -1,4 +1,4 @@
-import { Layout as AntLayout, Grid } from "antd";
+import { Layout as AntLayout } from "antd";
 import type { PropsWithChildren } from "react";
 
 const { Content } = AntLayout;

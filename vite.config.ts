@@ -5,6 +5,7 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: "/news-media-holding/",
   resolve: {
     alias: {
       "@app": path.resolve(__dirname, "src/app"),
